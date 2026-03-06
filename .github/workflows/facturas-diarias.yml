@@ -1,9 +1,9 @@
 name: Descargar Facturas Diarias
 
 on:
-  # Ejecutar automáticamente todos los días a las 9:00 AM (hora UTC)
+  # Ejecutar automáticamente todos los días a las 10:00 AM (hora española aproximada)
   schedule:
-    - cron: '0 9 * * *'  # 9:00 AM UTC = 10:00 AM CET (verano) / 11:00 AM CEST (invierno)
+    - cron: '0 8 * * *'  # 8:00 AM UTC = 9:00 AM CET (invierno) / 10:00 AM CEST (verano)
   
   # Permitir ejecución manual desde GitHub
   workflow_dispatch:
@@ -30,7 +30,7 @@ jobs:
           echo '${{ secrets.GMAIL_CREDENTIALS }}' > credentials.json
       
       - name: Crear archivo token.json (si existe)
-        if: ${{ secrets.GMAIL_TOKEN != '' }}
+        if: secrets.GMAIL_TOKEN != ''
         run: |
           echo '${{ secrets.GMAIL_TOKEN }}' > token.json
       
