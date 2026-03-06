@@ -51,7 +51,7 @@ jobs:
           fi
       
       - name: Subir archivos descargados (opcional)
-        if: always()
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: facturas-${{ github.run_number }}
@@ -59,3 +59,4 @@ jobs:
             ficheros/
             zips/
           retention-days: 7
+          if-no-files-found: ignore
