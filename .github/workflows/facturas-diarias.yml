@@ -1,0 +1,64 @@
+name: Descargar Facturas Diarias
+
+on:
+  # Ejecutar automáticamente todos los días a las 9:00 AM (hora UTC)
+  schedule:
+    - cron: '0 9 * * *'  # 9:00 AM UTC = 10:00 AM CET (verano) / 11:00 AM CEST (invierno)
+  
+  # Permitir ejecución manual desde GitHub
+  workflow_dispatch:
+
+jobs:
+  descargar-facturas:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+      
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Instalar dependencias
+        run: npm ci
+      
+      - name: Crear archivo credentials.json
+        run: |
+          echo '${{ secrets.GMAIL_CREDENTIALS }}' > credentials.json
+      
+      - name: Crear archivo token.json (si existe)
+        if: ${{ secrets.GMAIL_TOKEN != '' }}
+        run: |
+          echo '${{ secrets.GMAIL_TOKEN }}' > token.json
+      
+      - name: Crear directorios necesarios
+        run: |
+          mkdir -p ficheros
+          mkdir -p zips
+      
+      - name: Ejecutar script de descarga
+        run: node correos-dia-actual.js
+        env:
+          TO_EMAIL: ${{ secrets.TO_EMAIL }}
+      
+      - name: Guardar token actualizado
+        if: always()
+        run: |
+          if [ -f token.json ]; then
+            echo "Token actualizado disponible"
+            echo "::warning::Actualiza el secret GMAIL_TOKEN con el contenido de token.json"
+            cat token.json
+          fi
+      
+      - name: Subir archivos descargados (opcional)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: facturas-${{ github.run_number }}
+          path: |
+            ficheros/
+            zips/
+          retention-days: 7
