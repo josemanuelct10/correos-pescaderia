@@ -28,7 +28,7 @@ const DAY_FOLDER = getDayFolder();
 const OUT_DIR = path.resolve("ficheros", DAY_FOLDER);
 const ZIPS_DIR = path.resolve("zips");
 
-const TO_EMAIL = "josemanuel30503@hotmail.com";
+const TO_EMAIL = "lnpcontable@gmail.com";
 if (!TO_EMAIL) {
   console.error('Falta TO_EMAIL. Ejemplo: export TO_EMAIL="tuemail@dominio.com"');
   process.exit(1);
